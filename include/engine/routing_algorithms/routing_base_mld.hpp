@@ -112,6 +112,53 @@ retrievePackedPathFromSingleHeap(const SearchEngineData<Algorithm>::QueryHeap &h
     return packed_path;
 }
 
+template <bool DIRECTION, typename OutIter>
+inline void retrievePackedPathFromSingleManyToManyHeap(
+    SearchEngineData<Algorithm>::ManyToManyQueryHeap &heap, const NodeID middle, OutIter out)
+{
+
+    NodeID current = middle;
+    NodeID parent = heap.GetData(current).parent;
+    std::cout
+        << "inside the recursive retrievePackedPathFromSingleManyToManyHeap - middle node id: "
+        << current << " parent: " << parent << std::endl;
+
+    while (current != parent)
+    {
+        const auto &data = heap.GetData(current);
+
+        if (DIRECTION == FORWARD_DIRECTION)
+        {
+            *out = std::make_tuple(parent, current, data.from_clique_arc);
+            ++out;
+        }
+        else if (DIRECTION == REVERSE_DIRECTION)
+        {
+            *out = std::make_tuple(current, parent, data.from_clique_arc);
+            ++out;
+        }
+
+        current = parent;
+        parent = heap.GetData(parent).parent;
+    }
+}
+
+template <bool DIRECTION>
+inline PackedPath
+retrievePackedPathFromSingleManyToManyHeap(SearchEngineData<Algorithm>::ManyToManyQueryHeap &heap,
+                                           const NodeID middle)
+{
+    std::cout << "inside the parent retrievePackedPathFromSingleManyToManyHeap - middle node id: "
+              << middle << std::endl;
+    PackedPath packed_path;
+    retrievePackedPathFromSingleManyToManyHeap<DIRECTION>(
+        heap, middle, std::back_inserter(packed_path));
+    std::cout
+        << "inside the parent retrievePackedPathFromSingleManyToManyHeap - packed_path.size() "
+        << packed_path.size() << std::endl;
+    return packed_path;
+}
+
 // Trace path from middle to start in the forward search space (in reverse)
 // and from middle to end in the reverse search space. Middle connects paths.
 
