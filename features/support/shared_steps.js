@@ -103,7 +103,6 @@ module.exports = function () {
                             time = hasRoute && json.routes[0].duration,
                             weight = hasRoute && json.routes[0].weight;
 
-                        distance = Math.round(distance);
                         if (headers.has('distance')) {
                             if (row.distance.length) {
                                 if (!row.distance.match(/\d+m/))
