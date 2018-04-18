@@ -561,7 +561,6 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
             continue;
         }
 
-
         // from_clique_arc tells you if you are not on the base graph
 
         std::cout << "middle_node_id: " << middle_node_id << std::endl;
