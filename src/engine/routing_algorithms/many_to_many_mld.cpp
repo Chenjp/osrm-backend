@@ -516,17 +516,18 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
     std::vector<NodeID> packed_leg;
 
     (void)facade;
+    (void)source_phantom;
+    (void)phantom_nodes;
 
-    // find shortcutted path
+    // std::cout << "middle_nodes_table: ";
+    // for (auto middle_node_id = middle_nodes_table.begin();
+    //      middle_node_id != middle_nodes_table.end();
+    //      ++middle_node_id)
+    // {
+    //     std::cout << *middle_node_id << ", ";
+    // }
+    // std::cout << std::endl;
 
-    std::cout << "middle_nodes_table: ";
-    for (auto middle_node_id = middle_nodes_table.begin();
-         middle_node_id != middle_nodes_table.end();
-         ++middle_node_id)
-    {
-        std::cout << *middle_node_id << ", ";
-    }
-    std::cout << std::endl;
     // TODO: CREATE UNIT TESTS FOR EACH OF THE RETRIEVING PACK PATH FUNCTIONS
     // 1. Recreate packed path
     // 2. Unpack path
@@ -546,13 +547,13 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
             distances_table[location] = 0.0;
             continue;
         }
-        const auto &target_phantom = phantom_nodes[target_index];
+        // const auto &target_phantom = phantom_nodes[target_index];
         NodeID middle_node_id = middle_nodes_table[location];
 
-        std::cout << "source_phantom f id: " << source_phantom.forward_segment_id.id << " "
-                  << "source_phantom r id: " << source_phantom.reverse_segment_id.id << std::endl;
-        std::cout << "target_phantom f id: " << target_phantom.forward_segment_id.id << " "
-                  << "target_phantom r id: " << target_phantom.reverse_segment_id.id << std::endl;
+        // std::cout << "source_phantom f id: " << source_phantom.forward_segment_id.id << " "
+        //           << "source_phantom r id: " << source_phantom.reverse_segment_id.id << std::endl;
+        // std::cout << "target_phantom f id: " << target_phantom.forward_segment_id.id << " "
+        //           << "target_phantom r id: " << target_phantom.reverse_segment_id.id << std::endl;
 
         if (middle_node_id == SPECIAL_NODEID) // takes care of one-ways
         {
@@ -560,14 +561,15 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
             continue;
         }
 
-        // ASSUMPTION: 1) path should be in the same clique arc
-        // clique is a subset of vertices in a graph that all know each other
-        // so ASSUMPTION: clique arc is all the vetices in this subgraph
-        // ASSUMPTION: this subgraph is actually a "level" in MLD
-        // STRATEGY: get this packed path, traverse it and pull out nodeids that are from the
-        // same clique (when bool is true)
 
-        using PackedEdge = std::tuple</*from*/ NodeID, /*to*/ NodeID, /*from_clique_arc*/ bool>;
+        // from_clique_arc tells you if you are not on the base graph
+
+        std::cout << "middle_node_id: " << middle_node_id << std::endl;
+
+        using PackedEdge = std::tuple</*from*/ NodeID, /*to*/ NodeID, /*from_clique_arc*/ bool>; 
+        // https://github.com/Project-OSRM/osrm-backend/blob/master/include/engine/routing_algorithms/routing_base_mld.hpp#L363
+        // the bool tells you -- is this an overlay edge or not?
+
         using PackedPath = std::vector<PackedEdge>;
 
         // Step 1: Find path from source to middle node
@@ -597,7 +599,18 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
                                           column_idx,
                                           search_space_with_buckets,
                                           packed_leg); // packed_leg_from_middle_to_target
-        // similar to the search function
+
+        std::cout << "packed_leg: ";
+        for (auto node_id : packed_leg)
+        {
+            std::cout << "node_id: " << node_id << ", ";
+        }
+        std::cout << std::endl;
+
+        // call site for figuring out what node level to start at
+        // https://github.com/Project-OSRM/osrm-backend/blob/faff2c774d09a7227c77ae4fa40d22d54bb00b45/include/engine/routing_algorithms/routing_base_mld.hpp#L145
+
+        // unpacking and distance calculations down here
     }
 }
 
@@ -679,6 +692,9 @@ manyToManySearch(SearchEngineData<Algorithm> &engine_working_data,
                                           middle_nodes_table,
                                           source_phantom);
         }
+        // find the shortcutted path
+        // unpack it
+        // calculate the distances while unpacking the path
 
         if (calculate_distance)
         {

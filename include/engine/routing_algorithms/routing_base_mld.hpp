@@ -27,6 +27,10 @@ namespace mld
 
 namespace
 {
+
+// it's probably worth stepping through this method to understand what's happening here to see if we can use it
+
+
 // Unrestricted search (Args is const PhantomNodes &):
 //   * use partition.GetQueryLevel to find the node query level based on source and target phantoms
 //   * allow to traverse all cells
@@ -401,6 +405,8 @@ UnpackedPath search(SearchEngineData<Algorithm> &engine_working_data,
     unpacked_nodes.reserve(packed_path.size());
     unpacked_edges.reserve(packed_path.size());
 
+    // unpacked_distances vector
+
     unpacked_nodes.push_back(source_node);
 
     for (auto const &packed_edge : packed_path)
@@ -412,6 +418,7 @@ UnpackedPath search(SearchEngineData<Algorithm> &engine_working_data,
         { // a base graph edge
             unpacked_nodes.push_back(target);
             unpacked_edges.push_back(facade.FindEdge(source, target));
+            // unpacked_distances.push_back()
         }
         else
         { // an overlay graph edge
