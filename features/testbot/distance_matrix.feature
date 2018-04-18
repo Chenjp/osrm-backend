@@ -6,20 +6,20 @@ Feature: Basic Distance Matrix
         Given the profile "testbot"
         And the partition extra arguments "--small-component-size 1 --max-cell-sizes 2,4,8,16"
 
-    Scenario: Testbot - Travel distance matrix of minimal network
+    Scenario: Testbot - Travel distance matrix of minimal network only
         Given the node map
             """
-            a b
+            a b c d e f g h i j k l m n o p q r s t u v x y z
             """
 
         And the ways
             | nodes |
-            | ab    |
+            | abcdefghijklmnopqrstuvxyz|
 
         When I request a travel distance matrix I should get
-            |   | a   | b   |
-            | a | 0   | 100 |
-            | b | 100 | 0   |
+     |   | a   | b   | c   |     d   |     e   |     f   |     g   |     h   |     i   |     j   |     k    |     l    |     m    |     n    |
+     | a | 0   | 100 | 200 |   299.9 |   399.9 |   499.9 |   599.9 |   699.8 |   799.9 |   899.9 |   999.9  |   1099.9 |   1199.8 |   1299.8 |
+     | b | 100 | 0   | 100 |     200 |   299.9 |   399.9 |   499.9 |   599.9 |     700 |   799.9 |   899.9  |   999.9  |   1099.9 |   1199.8 |
 
     @ch
     Scenario: Testbot - Travel distance matrix of minimal network with toll exclude
