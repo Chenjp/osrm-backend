@@ -459,6 +459,10 @@ void retrievePackedPathFromSearchSpace(NodeID middle_node_id,
                                        std::vector<NodeID> &packed_leg)
 {
 
+    // for(auto bucket = search_space_with_buckets.begin(); bucket < search_space_with_buckets.end(); ++bucket) {
+    //     std::cout << *bucket;
+    // }
+
     //     [  0           1          2         3    ]
     //     [ [m0,p=m3],[m1,p=m2],[m2,p=m1], [m3,p=2]]
 
@@ -488,6 +492,7 @@ void retrievePackedPathFromSearchSpace(NodeID middle_node_id,
     while (bucket_list.first->parent_node != current_node_id &&
            bucket_list.first != search_space_with_buckets.end())
     {
+        std::cout << *bucket_list.first;
         current_node_id = bucket_list.first->parent_node;
 
         packed_leg.emplace_back(current_node_id);
@@ -515,25 +520,9 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
 {
     std::vector<NodeID> packed_leg;
 
-    (void)facade;
-    (void)source_phantom;
-    (void)phantom_nodes;
+    (void)facade;(void)query_heap;
+    (void)phantom_nodes;(void)source_phantom;
 
-    // std::cout << "middle_nodes_table: ";
-    // for (auto middle_node_id = middle_nodes_table.begin();
-    //      middle_node_id != middle_nodes_table.end();
-    //      ++middle_node_id)
-    // {
-    //     std::cout << *middle_node_id << ", ";
-    // }
-    // std::cout << std::endl;
-
-    // TODO: CREATE UNIT TESTS FOR EACH OF THE RETRIEVING PACK PATH FUNCTIONS
-    // 1. Recreate packed path
-    // 2. Unpack path
-    // 3. Offset the durations
-
-    std::cout << "do I get to before path unpacking?" << std::endl;
     for (unsigned column_idx = 0; column_idx < number_of_targets; ++column_idx)
     {
         const auto location = DIRECTION == FORWARD_DIRECTION
@@ -547,51 +536,48 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
             distances_table[location] = 0.0;
             continue;
         }
-        // const auto &target_phantom = phantom_nodes[target_index];
+        const auto &target_phantom = phantom_nodes[target_index];
         NodeID middle_node_id = middle_nodes_table[location];
 
-        // std::cout << "source_phantom f id: " << source_phantom.forward_segment_id.id << " "
-        //           << "source_phantom r id: " << source_phantom.reverse_segment_id.id << std::endl;
-        // std::cout << "target_phantom f id: " << target_phantom.forward_segment_id.id << " "
-        //           << "target_phantom r id: " << target_phantom.reverse_segment_id.id << std::endl;
+        std::cout << "target_phantom f id: " << target_phantom.forward_segment_id.id << " r id: " << target_phantom.reverse_segment_id.id << std::endl;
 
-        if (middle_node_id == SPECIAL_NODEID) // takes care of one-ways
-        {
-            distances_table[location] = INVALID_EDGE_DISTANCE;
-            continue;
-        }
+        // if (middle_node_id == SPECIAL_NODEID) // takes care of one-ways
+        // {
+        //     distances_table[location] = INVALID_EDGE_DISTANCE;
+        //     continue;
+        // }
 
         // from_clique_arc tells you if you are not on the base graph
 
-        std::cout << "middle_node_id: " << middle_node_id << std::endl;
+        // std::cout << "middle_node_id: " << middle_node_id << std::endl;
 
-        using PackedEdge = std::tuple</*from*/ NodeID, /*to*/ NodeID, /*from_clique_arc*/ bool>; 
-        // https://github.com/Project-OSRM/osrm-backend/blob/master/include/engine/routing_algorithms/routing_base_mld.hpp#L363
-        // the bool tells you -- is this an overlay edge or not?
+        // using PackedEdge = std::tuple</*from*/ NodeID, /*to*/ NodeID, /*from_clique_arc*/ bool>; 
+        // // https://github.com/Project-OSRM/osrm-backend/blob/master/include/engine/routing_algorithms/routing_base_mld.hpp#L363
+        // // the bool tells you -- is this an overlay edge or not?
 
-        using PackedPath = std::vector<PackedEdge>;
+        // using PackedPath = std::vector<PackedEdge>;
 
-        // Step 1: Find path from source to middle node
-        PackedPath packed_path_from_source_to_middle =
-            mld::retrievePackedPathFromSingleManyToManyHeap<DIRECTION>(
-                query_heap,
-                middle_node_id); // packed_leg_from_source_to_middle
+        // // Step 1: Find path from source to middle node
+        // PackedPath packed_path_from_source_to_middle =
+        //     mld::retrievePackedPathFromSingleManyToManyHeap<DIRECTION>(
+        //         query_heap,
+        //         middle_node_id); // packed_leg_from_source_to_middle
 
-        std::cout << "packed_path_from_source_to_middle.size(): "
-                  << packed_path_from_source_to_middle.size() << std::endl;
-        std::cout << "packed_path_from_source_to_middle: "
-                  << packed_path_from_source_to_middle.size() << std::endl;
-        for (auto packed_edge : packed_path_from_source_to_middle)
-        {
-            std::cout << "packed_edge_from: " << std::get<0>(packed_edge)
-                      << " packed_edge_to: " << std::get<1>(packed_edge)
-                      << " packed_edge_from_clique_arc: " << std::get<2>(packed_edge) << std::endl;
-        }
-        std::cout << std::endl;
+        // std::cout << "packed_path_from_source_to_middle.size(): "
+        //           << packed_path_from_source_to_middle.size() << std::endl;
+        // std::cout << "packed_path_from_source_to_middle: "
+        //           << packed_path_from_source_to_middle.size() << std::endl;
+        // for (auto packed_edge : packed_path_from_source_to_middle)
+        // {
+        //     std::cout << "packed_edge_from: " << std::get<0>(packed_edge)
+        //               << " packed_edge_to: " << std::get<1>(packed_edge)
+        //               << " packed_edge_from_clique_arc: " << std::get<2>(packed_edge) << std::endl;
+        // }
+        // std::cout << std::endl;
 
-        std::reverse(packed_leg.begin(), packed_leg.end());
+        // std::reverse(packed_leg.begin(), packed_leg.end());
 
-        packed_leg.push_back(middle_node_id);
+        // packed_leg.push_back(middle_node_id);
 
         // Step 2: Find path from middle to target node
         retrievePackedPathFromSearchSpace(middle_node_id,
@@ -599,12 +585,14 @@ void calculateDistances(typename SearchEngineData<mld::Algorithm>::ManyToManyQue
                                           search_space_with_buckets,
                                           packed_leg); // packed_leg_from_middle_to_target
 
-        std::cout << "packed_leg: ";
+        std::cout << "packed_leg_from_middle_to_target: ";
         for (auto node_id : packed_leg)
         {
-            std::cout << "node_id: " << node_id << ", ";
+            std::cout << node_id << ", ";
         }
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
+
+        // WHY IS EVERYTHIN OVER HERE A PHANTOM NODE TARGET OF ID 1????
 
         // call site for figuring out what node level to start at
         // https://github.com/Project-OSRM/osrm-backend/blob/faff2c774d09a7227c77ae4fa40d22d54bb00b45/include/engine/routing_algorithms/routing_base_mld.hpp#L145
@@ -697,6 +685,10 @@ manyToManySearch(SearchEngineData<Algorithm> &engine_working_data,
 
         if (calculate_distance)
         {
+
+            std::cout << "source_phantom f id: " << source_phantom.forward_segment_id.id << " "
+            << "source_phantom r id: " << source_phantom.reverse_segment_id.id << std::endl;
+
             distances_table.resize(number_of_entries, INVALID_EDGE_DISTANCE);
             calculateDistances<DIRECTION>(query_heap,
                                           facade,
@@ -711,6 +703,7 @@ manyToManySearch(SearchEngineData<Algorithm> &engine_working_data,
                                           distances_table,
                                           middle_nodes_table);
         }
+        std::cout << std::endl;
     }
 
     return std::make_pair(durations_table, distances_table);

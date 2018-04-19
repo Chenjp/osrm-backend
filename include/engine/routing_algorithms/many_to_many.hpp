@@ -15,7 +15,6 @@ namespace engine
 {
 namespace routing_algorithms
 {
-
 namespace
 {
 struct NodeBucket
@@ -74,6 +73,11 @@ struct NodeBucket
         }
     };
 };
+inline std::ostream &operator<<(std::ostream &out, const NodeBucket &bucket) {
+    out << "middle_node: " << bucket.middle_node << " parent_node: " << bucket.parent_node << " column_index: " << bucket.column_index << " weight: " << bucket.weight << " duration: " << bucket.duration << std::endl;
+    return out;
+}
+
 }
 
 template <typename Algorithm>

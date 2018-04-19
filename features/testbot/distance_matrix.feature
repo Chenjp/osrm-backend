@@ -6,6 +6,7 @@ Feature: Basic Distance Matrix
         Given the profile "testbot"
         And the partition extra arguments "--small-component-size 1 --max-cell-sizes 2,4,8,16"
 
+    @ch
     Scenario: Testbot - Travel distance matrix of minimal network only
         Given the node map
             """
@@ -145,7 +146,7 @@ Feature: Basic Distance Matrix
             | c | 200   |
             | d | 299.9 |
 
-    @ch
+
     Scenario: Testbot - Travel distance matrix of small grid
         Given the node map
             """
