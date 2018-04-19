@@ -222,13 +222,13 @@ curl 'http://router.project-osrm.org/route/v1/driving/13.388860,52.517037;13.397
 
 ### Table service
 
-Computes the duration of the fastest route between all pairs of supplied coordinates. Also returns the distances between the coordinate pairs. Note that the distances are not the shortest distance between two coordinates, but rather the distances of the fastest routes.
+Computes the duration of the fastest route between all pairs of supplied coordinates. Optinally, also returns the distances between the coordinate pairs. Note that the distances are not the shortest distance between two coordinates, but rather the distances of the fastest routes.
 
 ```endpoint
-GET /table/v1/{profile}/{coordinates}?{sources}=[{elem}...];&destinations=[{elem}...]
+GET /table/v1/{profile}/{coordinates}?{sources}=[{elem}...];&{destinations}=[{elem}...]&annotations={duration|distance|duration,distance}
 ```
 
-**Coordinates**
+**Options**
 
 In addition to the [general options](#general-options) the following options are supported for this service:
 
@@ -236,6 +236,7 @@ In addition to the [general options](#general-options) the following options are
 |------------|--------------------------------------------------|---------------------------------------------|
 |sources     |`{index};{index}[;{index} ...]` or `all` (default)|Use location with given index as source.     |
 |destinations|`{index};{index}[;{index} ...]` or `all` (default)|Use location with given index as destination.|
+|annotations |`duration` (default), `distance`                  |Return additional table with distances to the response. Whether requested or not, the duration table is always returned.|
 
 Unlike other array encoded options, the length of `sources` and `destinations` can be **smaller or equal**
 to number of input locations;
@@ -253,14 +254,23 @@ sources=0;5;7&destinations=5;1;4;2;3;6
 #### Example Request
 
 ```curl
-# Returns a 3x3 matrix:
+# Returns a 3x3 duration matrix:
 curl 'http://router.project-osrm.org/table/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219'
 
-# Returns a 1x3 matrix
+# Returns a 1x3 duration matrix
 curl 'http://router.project-osrm.org/table/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219?sources=0'
 
-# Returns a asymmetric 3x2 matrix with from the polyline encoded locations `qikdcB}~dpXkkHz`:
+# Returns a asymmetric 3x2 duration matrix with from the polyline encoded locations `qikdcB}~dpXkkHz`:
 curl 'http://router.project-osrm.org/table/v1/driving/polyline(egs_Iq_aqAppHzbHulFzeMe`EuvKpnCglA)?sources=0;1;3&destinations=2;4'
+
+# Returns a 3x3 duration matrix:
+curl 'http://router.project-osrm.org/table/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219&annotations=duration'
+
+# Returns a 3x3 duration matrix and a 3x3 distance matrix:
+curl 'http://router.project-osrm.org/table/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219&annotations=distance'
+
+# Returns a 3x3 duration matrix and a 3x3 distance matrix:
+curl 'http://router.project-osrm.org/table/v1/driving/13.388860,52.517037;13.397634,52.529407;13.428555,52.523219&annotations=distance,duration'
 ```
 
 **Response**
